@@ -90,6 +90,14 @@ class CWS_Enable_Plugins extends CWS_Disable_Plugins {
 /* ============================================================== */
 /* == Begin customization ======================================= */
 /* ============================================================== */
+/*
+Usage:
+
+new CWS_Enable_Plugins( array( 'plugin-dir/relative-path.php', 'another/path.php' ), 'Plugins screen message to replace action links' );
+new CWS_Disable_Plugins( array( 'plugin-dir/relative-path.php', 'another/path.php' ), 'Plugins screen message to replace action links' );
+
+Note that you can have multiple instances of each. Go nuts.
+*/
 
 if ( defined( 'WP_LOCAL_DEV' ) && WP_LOCAL_DEV ) { // For local dev
 	new CWS_Disable_Plugins( array( 'vaultpress.php', 'vaultpress/vaultpress.php' ), 'Only available in production' );
