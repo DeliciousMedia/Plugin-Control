@@ -1,6 +1,7 @@
 <?php
 /*
 Plugin Name: Plugin control
+Plugin URI: https://gist.github.com/markjaquith/39c4f465ecb94888b998
 Description: Force-enables or force-disables plugins, according to your rules
 Version: 0.2
 License: GPL version 2 or any later version
@@ -9,23 +10,26 @@ Author URI: http://coveredwebservices.com/
 */
 
 class CWS_Disable_Plugins {
-	protected $plugins = array();
+	protected $plugins = [];
 	protected $message = 'Disabled in this environment';
 
 	/**
 	 * Sets up the options filter, and optionally handles an array of plugins to disable
+	 *
 	 * @param array $disables Optional array of plugin filenames to disable
 	 */
-	public function __construct( Array $plugins, $message = NULL ) {
+	public function __construct( array $plugins, $message = null ) {
 		// Handle what was passed in
-		foreach ( $plugins as $plugin )
+		foreach ( $plugins as $plugin ) {
 				$this->choose( $plugin );
+		}
 
-		if ( ! is_null( $message ) )
+		if ( ! is_null( $message ) ) {
 			$this->message = $message;
+		}
 
 		// Add the filter
-		add_filter( 'option_active_plugins', array( $this, 'alter' ) );
+		add_filter( 'option_active_plugins', [ $this, 'alter' ] );
 	}
 
 	/**
@@ -33,7 +37,7 @@ class CWS_Disable_Plugins {
 	 */
 	public function choose( $file ) {
 		$this->plugins[] = $file;
-		add_filter( 'plugin_action_links_' . plugin_basename( $file ), array( $this, 'change_action_links' ) );
+		add_filter( 'plugin_action_links_' . plugin_basename( $file ), [ $this, 'change_action_links' ] );
 	}
 
 	function change_action_links( $actions ) {
@@ -45,6 +49,7 @@ class CWS_Disable_Plugins {
 
 	/**
 	 * Hooks in to the option_active_plugins filter and does the disabling
+	 *
 	 * @param array $plugins WP-provided list of plugin filenames
 	 * @return array The filtered array of plugin filenames
 	 */
@@ -52,8 +57,9 @@ class CWS_Disable_Plugins {
 		if ( count( $this->plugins ) ) {
 			foreach ( (array) $this->plugins as $plugin ) {
 				$key = array_search( $plugin, $plugins );
-				if ( false !== $key )
-					unset( $plugins[$key] );
+				if ( false !== $key ) {
+					unset( $plugins[ $key ] );
+				}
 			}
 		}
 		return $plugins;
@@ -72,6 +78,7 @@ class CWS_Enable_Plugins extends CWS_Disable_Plugins {
 
 	/**
 	 * Hooks in to the option_active_plugins filter and does the enabling
+	 *
 	 * @param array $plugins WP-provided list of plugin filenames
 	 * @return array The filtered array of plugin filenames
 	 */
@@ -79,34 +86,11 @@ class CWS_Enable_Plugins extends CWS_Disable_Plugins {
 		if ( count( $this->plugins ) ) {
 			foreach ( (array) $this->plugins as $plugin ) {
 				$key = array_search( $plugin, $plugins );
-				if ( false === $key )
+				if ( false === $key ) {
 					$plugins[] = $plugin;
+				}
 			}
 		}
 		return $plugins;
 	}
 }
-
-/* ============================================================== */
-/* == Begin customization ======================================= */
-/* ============================================================== */
-/*
-Usage:
-
-new CWS_Enable_Plugins( array( 'plugin-dir/relative-path.php', 'another/path.php' ), 'Plugins screen message to replace action links' );
-new CWS_Disable_Plugins( array( 'plugin-dir/relative-path.php', 'another/path.php' ), 'Plugins screen message to replace action links' );
-
-Note that you can have multiple instances of each. Go nuts.
-*/
-
-if ( defined( 'WP_LOCAL_DEV' ) && WP_LOCAL_DEV ) { // For local dev
-	new CWS_Disable_Plugins( array( 'vaultpress.php', 'vaultpress/vaultpress.php' ), 'Only available in production' );
-	new CWS_Enable_Plugins( array( 'debug-bar/debug-bar.php', 'debug-bar-console/debug-bar-console.php' ), 'Enabled for development' );
-} else { // Else, production
-	new CWS_Disable_Plugins( array( 'debug-bar/debug-bar.php', 'debug-bar-console/debug-bar-console.php' ), 'Disabled on production' );
-}
-
-// And always:
-new CWS_Enable_Plugins( array(
-	'manual-control/manual-control.php',
-), 'Always enabled' );
