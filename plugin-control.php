@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: Plugin control
+Plugin Name: Plugin Control
 Plugin URI: https://gist.github.com/markjaquith/39c4f465ecb94888b998
-Description: Force-enables or force-disables plugins, according to your rules
+Description: Force-enables or force-disables plugins, according to your rules.
 Version: 0.2
 License: GPL version 2 or any later version
 Author: Mark Jaquith
@@ -16,7 +16,7 @@ class CWS_Disable_Plugins {
 	/**
 	 * Sets up the options filter, and optionally handles an array of plugins to disable
 	 *
-	 * @param array $disables Optional array of plugin filenames to disable
+	 * @param array $disables Optional array of plugin filenames to disable.
 	 */
 	public function __construct( array $plugins, $message = null ) {
 		// Handle what was passed in
@@ -28,12 +28,12 @@ class CWS_Disable_Plugins {
 			$this->message = $message;
 		}
 
-		// Add the filter
+		// Add the filter.
 		add_filter( 'option_active_plugins', [ $this, 'alter' ] );
 	}
 
 	/**
-	 * Adds a filename to the list of plugins to disable
+	 * Adds a filename to the list of plugins to disable.
 	 */
 	public function choose( $file ) {
 		$this->plugins[] = $file;
@@ -48,10 +48,10 @@ class CWS_Disable_Plugins {
 	}
 
 	/**
-	 * Hooks in to the option_active_plugins filter and does the disabling
+	 * Hooks in to the option_active_plugins filter and does the disabling.
 	 *
-	 * @param array $plugins WP-provided list of plugin filenames
-	 * @return array The filtered array of plugin filenames
+	 * @param array $plugins WP-provided list of plugin filenames.
+	 * @return array The filtered array of plugin filenames.
 	 */
 	public function alter( $plugins ) {
 		if ( count( $this->plugins ) ) {
@@ -77,10 +77,10 @@ class CWS_Enable_Plugins extends CWS_Disable_Plugins {
 	}
 
 	/**
-	 * Hooks in to the option_active_plugins filter and does the enabling
+	 * Hooks in to the option_active_plugins filter and does the enabling.
 	 *
-	 * @param array $plugins WP-provided list of plugin filenames
-	 * @return array The filtered array of plugin filenames
+	 * @param array $plugins WP-provided list of plugin filenames.
+	 * @return array The filtered array of plugin filenames.
 	 */
 	public function alter( $plugins ) {
 		if ( count( $this->plugins ) ) {
